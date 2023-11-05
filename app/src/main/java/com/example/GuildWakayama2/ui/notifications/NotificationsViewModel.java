@@ -1,4 +1,4 @@
-package com.example.androidgittest.ui.notifications;
+package com.example.GuildWakayama2.ui.notifications;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

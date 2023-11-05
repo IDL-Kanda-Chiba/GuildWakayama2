@@ -1,4 +1,4 @@
-package com.example.androidgittest;
+package com.example.GuildWakayama2;
 
 import android.os.Bundle;
 
@@ -10,7 +10,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.androidgittest.databinding.ActivityMainBinding;
+import com.example.GuildWakayama2.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.example.androidgittest.ui.home;
+package com.example.GuildWakayama2.ui.home;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

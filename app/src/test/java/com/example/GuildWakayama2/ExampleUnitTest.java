@@ -1,4 +1,4 @@
-package com.example.androidgittest;
+package com.example.GuildWakayama2;
 
 import org.junit.Test;
 

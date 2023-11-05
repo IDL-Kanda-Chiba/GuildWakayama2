@@ -1,4 +1,4 @@
-package com.example.androidgittest.ui.dashboard;
+package com.example.GuildWakayama2.ui.dashboard;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

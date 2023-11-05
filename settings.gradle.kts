@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "AndroidGitTest"
+rootProject.name = "GuildWakayama2"
 include(":app")
