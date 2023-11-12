@@ -1,19 +1,20 @@
-package com.example.GuildWakayama2.ui.home;
+package com.example.GuildWakayama2.ui.mypage;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class HomeViewModel extends ViewModel {
+public class MypageViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
 
-    public HomeViewModel() {
+    public MypageViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is mypage fragment");
+        mText.setValue("This is home fragment");
     }
 
     public LiveData<String> getText() {
         return mText;
     }
 }
+
