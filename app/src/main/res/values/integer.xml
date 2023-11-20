@@ -1,0 +1,4 @@
+<resources>
+    <integer name="default_point">50</integer>
+    <integer name="default_ticket">0</integer>
+</resources>

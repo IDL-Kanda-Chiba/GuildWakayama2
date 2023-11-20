@@ -1,6 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<<<<<<< Updated upstream
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+=======
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/userIconImageView"
+        android:layout_width="99dp"
+        android:layout_height="103dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintEnd_toStartOf="@+id/userNameTextView"
+        app:layout_constraintHorizontal_bias="0.361"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_profile" />
+
+    <TextView
+        android:id="@+id/userNameTextView"
+        android:layout_width="125dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="68dp"
+        android:layout_marginEnd="68dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/pointTextView"
+        android:layout_width="119dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="48dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userIconImageView" />
+
+    <TextView
+        android:id="@+id/ticketTextView"
+        android:layout_width="151dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="64dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.514"
+        app:layout_constraintStart_toEndOf="@+id/pointTextView"
+        app:layout_constraintTop_toBottomOf="@+id/userNameTextView" />
+
+    <Button
+        android:id="@+id/increaseTicketButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="188dp"
+        android:layout_marginEnd="108dp"
+        android:text="add"
+        app:layout_constraintEnd_toStartOf="@+id/changeInfoButton"
+        app:layout_constraintTop_toBottomOf="@+id/pointTextView" />
+
+    <Button
+        android:id="@+id/changeInfoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="196dp"
+        android:layout_marginEnd="68dp"
+        android:text="Log"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ticketTextView"
+        app:layout_constraintVertical_bias="0.0" />
+>>>>>>> Stashed changes
 </androidx.constraintlayout.widget.ConstraintLayout>

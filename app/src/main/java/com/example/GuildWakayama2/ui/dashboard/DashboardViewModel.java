@@ -1,3 +1,4 @@
+// DashboardViewModel.java
 package com.example.GuildWakayama2.ui.dashboard;
 
 import androidx.lifecycle.LiveData;
