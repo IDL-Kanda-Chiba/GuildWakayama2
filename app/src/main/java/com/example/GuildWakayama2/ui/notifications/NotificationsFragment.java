@@ -13,7 +13,6 @@ import java.util.Set;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.example.GuildWakayama2.databinding.FragmentNotificationsBinding;
 
 public class NotificationsFragment extends Fragment {
@@ -83,6 +82,8 @@ public class NotificationsFragment extends Fragment {
             // Spinner2の選択内容をログに表示
             String spinner2Selection = viewModel.selectedOption2.getValue();
             Log.d("NotificationsFragment", "Spinner 2 Selection: " + spinner2Selection);
+            // 保存メソッドを呼び出して情報をSharedPreferencesに保存
+            viewModel.saveQuestInfo(requireContext(), textInput, textInput2, spinner1Selection, spinner2Selection);
         });
 // ボタンが押されたときの処理
         // ダイアログの表示ボタンのクリックリスナー
@@ -91,27 +92,29 @@ public class NotificationsFragment extends Fragment {
             Set<String> selectedOptions = viewModel.getSelectedOptions();
 
             // 現在の選択状態をダイアログに反映
-            boolean[] checkedItems = new boolean[viewModel.getOptions().size()];
+            boolean[] checkedItems = new boolean[viewModel.getOptions3().size()];
             int index = 0;
-            for (String option : viewModel.getOptions()) {
+            for (String option : viewModel.getOptions3()) {
                 checkedItems[index++] = selectedOptions.contains(option);
             }
 
             // ダイアログの作成
             AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
             builder.setTitle("Select Options")
-                    .setMultiChoiceItems(viewModel.getOptions().toArray(new CharSequence[0]), checkedItems,
+                    .setMultiChoiceItems(viewModel.getOptions3().toArray(new CharSequence[0]), checkedItems,
                             (dialog, which, isChecked) -> {
-                                String option = viewModel.getOptions().get(which);
+                                String option = viewModel.getOptions3().get(which);
                                 if (isChecked) {
-                                    selectedOptions.add(option);
+                                    viewModel.onCheckboxChecked(option);
                                 } else {
-                                    selectedOptions.remove(option);
+                                    viewModel.onCheckboxUnchecked(option);
                                 }
                             })
                     .setPositiveButton("OK", (dialog, which) -> {
                         // ダイアログが閉じられたときの処理
                         viewModel.onDialogClosed();
+                        // ダイアログが閉じられたときの情報を保存
+                        viewModel.onDialogClosedSaveInfo(requireContext());
                     })
                     .setNegativeButton("Cancel", null)
                     .create()

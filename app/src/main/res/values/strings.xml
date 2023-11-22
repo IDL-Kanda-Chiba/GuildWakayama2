@@ -4,11 +4,10 @@
     <string name="title_dashboard">Search</string>
     <string name="title_notifications">Write</string>
     <string name="title_mypage">MyPage</string>
-<<<<<<< Updated upstream
-=======
     <string name="default_username">jack</string>
     <string name="default_password">1234</string>
     <string name="point_format">Point: %d</string>
     <string name="ticket_format">Ticket: %d</string>
->>>>>>> Stashed changes
+    <string name="no_request_title">あなたは依頼を出していません</string>
+    <string name="no_request_text">で依頼を出してください</string>
 </resources>

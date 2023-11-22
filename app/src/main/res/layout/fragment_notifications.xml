@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Enter text 1"
+        android:hint="タイトルを入力してください"
         android:inputType="textMultiLine"
         app:layout_constraintTop_toBottomOf="@id/spinner1" />
 
@@ -31,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:hint="Enter text 2"
+        android:hint="クエストの詳細を入力してください"
         app:layout_constraintTop_toBottomOf="@id/editTextUserInput1" />
 
     <!-- ユーザーが選択する項目のSpinner -->

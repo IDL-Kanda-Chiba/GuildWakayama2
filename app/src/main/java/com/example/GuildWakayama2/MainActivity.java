@@ -9,7 +9,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
 import com.example.GuildWakayama2.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {

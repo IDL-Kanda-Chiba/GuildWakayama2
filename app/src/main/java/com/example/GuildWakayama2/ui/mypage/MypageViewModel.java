@@ -1,33 +1,11 @@
 package com.example.GuildWakayama2.ui.mypage;
 
-<<<<<<< Updated upstream
-=======
 import android.content.Context;
 import android.content.SharedPreferences;
-
->>>>>>> Stashed changes
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
-<<<<<<< Updated upstream
-public class MypageViewModel extends ViewModel {
-
-    private final MutableLiveData<String> mText;
-
-    public MypageViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is home fragment");
-    }
-
-    public LiveData<String> getText() {
-        return mText;
-    }
-}
-
-=======
 import com.example.GuildWakayama2.GuildWakayama2Application;
-import com.example.GuildWakayama2.R;
 
 public class MypageViewModel extends ViewModel {
 
@@ -85,7 +63,7 @@ public class MypageViewModel extends ViewModel {
         editor.apply();
     }
 
-    private void loadUserData() {
+    public void loadUserData() {
         userName.setValue(sharedPreferences.getString("username", userName.getValue()));
         point.setValue(sharedPreferences.getInt("point", point.getValue() != null ? point.getValue() : 0));
         ticket.setValue(sharedPreferences.getInt("ticket", ticket.getValue() != null ? ticket.getValue() : 0));
@@ -102,4 +80,3 @@ public class MypageViewModel extends ViewModel {
         password.setValue(newPassword);
     }
 }
->>>>>>> Stashed changes

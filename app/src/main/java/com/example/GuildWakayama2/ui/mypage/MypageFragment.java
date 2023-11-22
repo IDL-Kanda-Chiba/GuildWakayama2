@@ -1,49 +1,19 @@
 package com.example.GuildWakayama2.ui.mypage;
 
 import android.os.Bundle;
-<<<<<<< Updated upstream
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-=======
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import android.widget.EditText;
->>>>>>> Stashed changes
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-
-<<<<<<< Updated upstream
-import com.example.GuildWakayama2.databinding.FragmentHomeBinding;
-import com.example.GuildWakayama2.ui.home.HomeViewModel;
-
-public class MypageFragment extends Fragment {
-
-    private FragmentHomeBinding binding;
-
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
-
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        final TextView textView = binding.textHome;
-        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-        return root;
-    }
-
-=======
 import com.example.GuildWakayama2.R;
 import com.example.GuildWakayama2.databinding.FragmentMypageBinding;
 
@@ -71,6 +41,7 @@ public class MypageFragment extends Fragment {
         mypageViewModel.getPoint().observe(getViewLifecycleOwner(), point -> pointTextView.setText(getString(R.string.point_format, point)));
         mypageViewModel.getTicket().observe(getViewLifecycleOwner(), ticket -> ticketTextView.setText(getString(R.string.ticket_format, ticket)));
         userIconImageView.setImageResource(R.drawable.ic_profile); // Assuming you have ic_profile.png in your resources.
+        mypageViewModel.loadUserData();
 
         increaseTicketButton.setOnClickListener(v -> {
             mypageViewModel.increaseTicket();
@@ -128,7 +99,6 @@ public class MypageFragment extends Fragment {
         Log.d("MyPage",userData);
     }
 
->>>>>>> Stashed changes
     @Override
     public void onDestroyView() {
         super.onDestroyView();
