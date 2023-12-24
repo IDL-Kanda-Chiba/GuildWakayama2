@@ -9,11 +9,20 @@ import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.app.AlertDialog;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.GuildWakayama2.databinding.FragmentNotificationsBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class NotificationsFragment extends Fragment {
 
@@ -84,6 +93,10 @@ public class NotificationsFragment extends Fragment {
             Log.d("NotificationsFragment", "Spinner 2 Selection: " + spinner2Selection);
             // 保存メソッドを呼び出して情報をSharedPreferencesに保存
             viewModel.saveQuestInfo(requireContext(), textInput, textInput2, spinner1Selection, spinner2Selection);
+
+            // 投稿データをFirebase Realtime Databaseに書き込む
+            writePostDataToDatabase(textInput, textInput2, spinner1Selection, spinner2Selection);
+
         });
 // ボタンが押されたときの処理
         // ダイアログの表示ボタンのクリックリスナー
@@ -122,6 +135,27 @@ public class NotificationsFragment extends Fragment {
         });
 
         return root;
+    }
+
+    private void writePostDataToDatabase(String title, String body, String genre, String difficulty){
+        // Firebase Realtime Databaseにデータを書き込む
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference reference = database.getReference("requests");
+        //reference.push().setValue(requestData);
+
+        // FirebaseAuthのユーザデータを読み込む
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String user_name = user.getDisplayName();
+        String user_id = user.getUid();
+
+        String key = reference.child("requests").push().getKey();
+        Post request = new Post(user_name, user_id, title, body, genre, difficulty);
+        Map<String, Object> requestValues = request.toMap();
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/requests" + key, requestValues);
+
+        reference.updateChildren(childUpdates);
     }
 
     @Override
