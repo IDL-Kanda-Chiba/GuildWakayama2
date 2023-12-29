@@ -29,6 +29,9 @@ public class NotificationsFragment extends Fragment {
     private FragmentNotificationsBinding binding;
     private NotificationsViewModel viewModel;
 
+    private double latitude;
+    private double longitude;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
@@ -149,7 +152,7 @@ public class NotificationsFragment extends Fragment {
         String user_id = user.getUid();
 
         String key = reference.child("requests").push().getKey();
-        Post request = new Post(user_name, user_id, title, body, genre, difficulty);
+        Post request = new Post(user_name, user_id, title, body, genre, difficulty,latitude,longitude);
         Map<String, Object> requestValues = request.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();

@@ -110,27 +110,27 @@
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
 
         <Button
-            android:id="@+id/respond_review_button"
+            android:id="@+id/RespondReviewButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="64dp"
+            android:layout_marginEnd="68dp"
             android:text="地図を表示"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/respond_title"
-            app:layout_constraintVertical_bias="0.751" />
+            app:layout_constraintTop_toBottomOf="@+id/RespondTitle"
+            app:layout_constraintVertical_bias="0.99" />
 
         <Button
-            android:id="@+id/respond_cancel_button"
+            android:id="@+id/RespondCancelButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="取り消し"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/respond_review_button"
-            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintEnd_toStartOf="@+id/RespondReviewButton"
+            app:layout_constraintHorizontal_bias="0.506"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/respond_title"
-            app:layout_constraintVertical_bias="0.751" />
+            app:layout_constraintTop_toBottomOf="@+id/RespondTitle"
+            app:layout_constraintVertical_bias="1.0" />
 
         <ImageView
             android:id="@+id/respond_back"
@@ -146,15 +146,15 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
-            android:id="@+id/respond_imageView"
+            android:id="@+id/RespondImageview"
             android:layout_width="75dp"
             android:layout_height="67dp"
             android:src="@drawable/ic_search"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/respond_textView"
+            app:layout_constraintEnd_toStartOf="@+id/RespondTextview"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/respond_title"
+            app:layout_constraintTop_toBottomOf="@+id/RespondTitle"
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
@@ -170,7 +170,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/respond_title"
+            android:id="@+id/RespondTitle"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:layout_marginTop="20dp"
@@ -182,15 +182,15 @@
             app:layout_constraintTop_toBottomOf="@+id/respond" />
 
         <TextView
-            android:id="@+id/respond_textView"
-            android:layout_width="238dp"
-            android:layout_height="38dp"
+            android:id="@+id/RespondTextview"
+            android:layout_width="243dp"
+            android:layout_height="81dp"
             android:layout_marginEnd="68dp"
             android:text="で依頼を受けてください"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/respond_title"
+            app:layout_constraintTop_toBottomOf="@+id/RespondTitle"
             app:layout_constraintVertical_bias="0.12" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

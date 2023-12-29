@@ -22,8 +22,10 @@ public class Post {
     }
 
     // 位置情報を後で記す
-    public Post(String user_name, String user_id, String title, String body, String genre, String difficulty){
-        //this.location = Arrays.asList(latitude, longitude);
+    public Post(String user_name, String user_id, String title, String body, String genre,
+                String difficulty,double latitude, double longitude){
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.user_name = user_name;
         this.user_id = user_id;
         this.title = title;
@@ -34,14 +36,14 @@ public class Post {
 
     public Map<String, Object> toMap(){
         HashMap<String, Object> result = new HashMap<>();
-        //result.put("location", location);
+        result.put("latitude", latitude);
+        result.put("longitude",longitude);
         result.put("user_name", user_name);
         result.put("user_id", user_id);
         result.put("title", title);
         result.put("body", body);
         result.put("genre", genre);
         result.put("difficulty", difficulty);
-
         return result;
     }
 

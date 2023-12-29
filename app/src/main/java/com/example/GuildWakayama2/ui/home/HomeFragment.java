@@ -28,7 +28,63 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         switchrequestshow();
+        switchrespondshow();
         return root;
+    }
+
+    private void switchrespondshow(){
+        Button respond_cancel_button = binding.RespondCancelButton;
+        Button respond_solve_button = binding.RespondReviewButton;
+        respond_cancel_button.setOnClickListener(v -> CancelRespond());
+        respond_solve_button.setOnClickListener(v -> SolveRespond());
+
+        ImageView respond_imageview = binding.RespondImageview;
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Responder", Context.MODE_PRIVATE);
+        boolean currentRequestState = sharedPreferences.getBoolean("Respond", false);
+        if(currentRequestState){
+            respond_solve_button.setVisibility(View.VISIBLE);
+            respond_cancel_button.setVisibility(View.VISIBLE);
+            respond_imageview.setVisibility(View.GONE);
+        }else{
+            respond_solve_button.setVisibility(View.GONE);
+            respond_cancel_button.setVisibility(View.GONE);
+            respond_imageview.setVisibility(View.VISIBLE);
+        }displayRespondData();
+    }
+
+    private void CancelRespond(){
+        DeleteRespond();
+        switchrespondshow();
+    }
+
+    private void SolveRespond() {
+        //DeleteRespond();
+    }
+
+    private void displayRespondData() {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Responder", Context.MODE_PRIVATE);
+        boolean isRequestTrue = sharedPreferences.getBoolean("Respond", false);
+        if (isRequestTrue) {
+            String title = sharedPreferences.getString("Title", "");
+            String category = sharedPreferences.getString("Genre", "");
+            String level = sharedPreferences.getString("Difficulty", "");
+
+            String displayText = "ジャンル: " + category + "\n難易度: " + level;
+            binding.RespondTitle.setText(title);
+            binding.RespondTextview.setText(displayText);
+        } else {
+            // Requestがfalseの場合のログ表示
+            binding.RespondTitle.setText("あなたは依頼を受けていません");
+            binding.RespondTextview.setText("で依頼を受けてください");
+        }
+    }
+
+    private void DeleteRespond() {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Responder", Context.MODE_PRIVATE);
+        boolean currentRespondState = sharedPreferences.getBoolean("Respond", false);
+        boolean newRequestState = !currentRespondState;
+        sharedPreferences.edit().putBoolean("Respond", newRequestState).apply();
     }
 
     private void switchrequestshow(){
@@ -49,7 +105,7 @@ public class HomeFragment extends Fragment {
             request_solve_button.setVisibility(View.GONE);
             request_cancel_button.setVisibility(View.GONE);
             request_imageview.setVisibility(View.VISIBLE);
-        }displayData();
+        }displayrequestData();
     }
 
     private void CancelRequest(){
@@ -110,7 +166,7 @@ public class HomeFragment extends Fragment {
         dialog.show();
     }
 
-    private void displayData() {
+    private void displayrequestData() {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Requester", Context.MODE_PRIVATE);
         boolean isRequestTrue = sharedPreferences.getBoolean("Request", false);
         if (isRequestTrue) {
