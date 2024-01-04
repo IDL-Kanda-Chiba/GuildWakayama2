@@ -143,7 +143,7 @@ public class NotificationsFragment extends Fragment {
     private void writePostDataToDatabase(String title, String body, String genre, String difficulty){
         // Firebase Realtime Databaseにデータを書き込む
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference reference = database.getReference("requests");
+        DatabaseReference reference = database.getReference("requests"); //親データ
         //reference.push().setValue(requestData);
 
         // FirebaseAuthのユーザデータを読み込む
@@ -153,12 +153,14 @@ public class NotificationsFragment extends Fragment {
 
         String key = reference.child("requests").push().getKey();
         Post request = new Post(user_name, user_id, title, body, genre, difficulty,latitude,longitude);
-        Map<String, Object> requestValues = request.toMap();
+        Map<String, Object> requestValues = request.toMap(); //リクエストデータを構造化（ツリー化）
+        //reference.child(key).child(user_name).setValue(requestValues);
+        reference.child("user-id").child(user_id).setValue(requestValues);
 
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/requests" + key, requestValues);
+        //Map<String, Object> childUpdates = new HashMap<>();
+        //childUpdates.put("/requests" + key, requestValues); //request(親)にrequest(子)を作成しリクエストデータを格納
 
-        reference.updateChildren(childUpdates);
+        //reference.updateChildren(childUpdates);
     }
 
     @Override

@@ -11,6 +11,12 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.GuildWakayama2.databinding.FragmentHomeBinding;
+import com.google.firebase.Firebase;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import android.widget.ImageView;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -88,7 +94,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void switchrequestshow(){
-        Button request_cancel_button = binding.RequestCancelButton;
+        Button request_cancel_button = binding.RequestCancelButton; // 自分の投稿を取り消すボタン
         Button request_solve_button = binding.RequestSolveButton;
         request_cancel_button.setOnClickListener(v -> CancelRequest());
         request_solve_button.setOnClickListener(v -> SolveRequest());
@@ -108,8 +114,9 @@ public class HomeFragment extends Fragment {
         }displayrequestData();
     }
 
+    // 投稿を取り消すボタンを押したときの処理
     private void CancelRequest(){
-        DeleteRequest();
+        DeleteRequest(); // 投稿を取り消す処理
         switchrequestshow();
     }
 
@@ -184,11 +191,20 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    // 投稿を取り消す処理
     private void DeleteRequest() {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Requester", Context.MODE_PRIVATE);
         boolean currentRequestState = sharedPreferences.getBoolean("Request", false);
         boolean newRequestState = !currentRequestState;
         sharedPreferences.edit().putBoolean("Request", newRequestState).apply();
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference reference = database.getReference("requests");
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String user_id = user.getUid();
+
+        reference.child("user-id").child(user_id).removeValue();
     }
 
     @Override
