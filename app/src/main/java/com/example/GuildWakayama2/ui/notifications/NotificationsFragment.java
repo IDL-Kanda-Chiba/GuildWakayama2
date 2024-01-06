@@ -1,5 +1,6 @@
 package com.example.GuildWakayama2.ui.notifications;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,11 +24,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.example.GuildWakayama2.ui.LocationManagerHelper;
 
 public class NotificationsFragment extends Fragment {
 
     private FragmentNotificationsBinding binding;
     private NotificationsViewModel viewModel;
+    private LocationManagerHelper locationManagerHelper;
 
     private double latitude;
     private double longitude;
@@ -39,6 +42,10 @@ public class NotificationsFragment extends Fragment {
 
         // ViewModelの初期化
         viewModel = new ViewModelProvider(this).get(NotificationsViewModel.class);
+        // 新しいLocationManagerHelperのインスタンスを生成
+        locationManagerHelper = new LocationManagerHelper(requireContext());
+        // 位置情報の取得
+        locationManagerHelper.getLocation(this);
 
         // Spinner1の処理
         Spinner spinner1 = binding.spinner1;
@@ -78,30 +85,27 @@ public class NotificationsFragment extends Fragment {
             }
         });
 
+        // 新しいLocationManagerHelperのインスタンスを生成
+        locationManagerHelper = new LocationManagerHelper(requireContext());
+
         // ログに表示するボタンの処理
         binding.logButton.setOnClickListener(v -> {
             // テキスト入力の内容をログに表示
             String textInput = binding.editTextUserInput1.getText().toString();
-            Log.d("NotificationsFragment", "Text Input: " + textInput);
-
             String textInput2 = binding.editTextUserInput2.getText().toString();
-            Log.d("NotificationsFragment", "Text Input2: " + textInput2);
-
-            // Spinner1の選択内容をログに表示
             String spinner1Selection = viewModel.selectedOption.getValue();
-            Log.d("NotificationsFragment", "Spinner 1 Selection: " + spinner1Selection);
-
-            // Spinner2の選択内容をログに表示
             String spinner2Selection = viewModel.selectedOption2.getValue();
-            Log.d("NotificationsFragment", "Spinner 2 Selection: " + spinner2Selection);
             // 保存メソッドを呼び出して情報をSharedPreferencesに保存
             viewModel.saveQuestInfo(requireContext(), textInput, textInput2, spinner1Selection, spinner2Selection);
+            Log.d("NotificationLocation","位置情報取得開始");
+            // 位置情報の取得
+            locationManagerHelper.getLocation(this);
 
             // 投稿データをFirebase Realtime Databaseに書き込む
             writePostDataToDatabase(textInput, textInput2, spinner1Selection, spinner2Selection);
 
         });
-// ボタンが押されたときの処理
+        // ボタンが押されたときの処理
         // ダイアログの表示ボタンのクリックリスナー
         binding.showDialogButton.setOnClickListener(v -> {
             // 選択状態を保持するSet
@@ -150,6 +154,8 @@ public class NotificationsFragment extends Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String user_name = user.getDisplayName();
         String user_id = user.getUid();
+        latitude = locationManagerHelper.getLatitude();
+        longitude = locationManagerHelper.getLongitude();
 
         String key = reference.child("requests").push().getKey();
         Post request = new Post(user_name, user_id, title, body, genre, difficulty,latitude,longitude);

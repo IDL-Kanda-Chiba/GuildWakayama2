@@ -19,7 +19,7 @@ public class MypageViewModel extends ViewModel {
 
     public MypageViewModel() {
         userName = new MutableLiveData<>("jack");
-        point = new MutableLiveData<>(50);
+        point = new MutableLiveData<>(0);
         ticket = new MutableLiveData<>(0);
         password = new MutableLiveData<>("1234");
         email = new MutableLiveData<>("a@gmail.com");
