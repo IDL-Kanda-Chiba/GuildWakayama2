@@ -1,25 +1,19 @@
 package com.example.GuildWakayama2.ui.notifications;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.app.AlertDialog;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.GuildWakayama2.databinding.FragmentNotificationsBinding;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -49,7 +43,7 @@ public class NotificationsFragment extends Fragment {
 
         // Spinner1の処理
         Spinner spinner1 = binding.spinner1;
-        ArrayAdapter<String> adapter1 = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, viewModel.getOptions());
+        CustomArrayAdapter adapter1 = new CustomArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, viewModel.getOptions().toArray(new String[0]));
         adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner1.setAdapter(adapter1);
 
@@ -68,7 +62,7 @@ public class NotificationsFragment extends Fragment {
 
         // Spinner2の処理
         Spinner spinner2 = binding.spinner2;
-        ArrayAdapter<String> adapter2 = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, viewModel.getOptions2());
+        CustomArrayAdapter adapter2 = new CustomArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, viewModel.getOptions2().toArray(new String[0]));
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner2.setAdapter(adapter2);
 
@@ -90,58 +84,42 @@ public class NotificationsFragment extends Fragment {
 
         // ログに表示するボタンの処理
         binding.logButton.setOnClickListener(v -> {
-            // テキスト入力の内容をログに表示
-            String textInput = binding.editTextUserInput1.getText().toString();
-            String textInput2 = binding.editTextUserInput2.getText().toString();
-            String spinner1Selection = viewModel.selectedOption.getValue();
-            String spinner2Selection = viewModel.selectedOption2.getValue();
-            // 保存メソッドを呼び出して情報をSharedPreferencesに保存
-            viewModel.saveQuestInfo(requireContext(), textInput, textInput2, spinner1Selection, spinner2Selection);
-            Log.d("NotificationLocation","位置情報取得開始");
-            // 位置情報の取得
-            locationManagerHelper.getLocation(this);
-
-            // 投稿データをFirebase Realtime Databaseに書き込む
-            writePostDataToDatabase(textInput, textInput2, spinner1Selection, spinner2Selection);
-
-        });
-        // ボタンが押されたときの処理
-        // ダイアログの表示ボタンのクリックリスナー
-        binding.showDialogButton.setOnClickListener(v -> {
-            // 選択状態を保持するSet
-            Set<String> selectedOptions = viewModel.getSelectedOptions();
-
-            // 現在の選択状態をダイアログに反映
-            boolean[] checkedItems = new boolean[viewModel.getOptions3().size()];
-            int index = 0;
-            for (String option : viewModel.getOptions3()) {
-                checkedItems[index++] = selectedOptions.contains(option);
-            }
-
-            // ダイアログの作成
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-            builder.setTitle("Select Options")
-                    .setMultiChoiceItems(viewModel.getOptions3().toArray(new CharSequence[0]), checkedItems,
-                            (dialog, which, isChecked) -> {
-                                String option = viewModel.getOptions3().get(which);
-                                if (isChecked) {
-                                    viewModel.onCheckboxChecked(option);
-                                } else {
-                                    viewModel.onCheckboxUnchecked(option);
-                                }
-                            })
-                    .setPositiveButton("OK", (dialog, which) -> {
-                        // ダイアログが閉じられたときの処理
-                        viewModel.onDialogClosed();
-                        // ダイアログが閉じられたときの情報を保存
-                        viewModel.onDialogClosedSaveInfo(requireContext());
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .create()
-                    .show();
+            AlertDialog.Builder builder;
+            builder = new AlertDialog.Builder(requireContext());
+            builder.setMessage("依頼を提出します\nよろしいですか？");
+            builder.setTitle("確認");
+            builder.setPositiveButton("OK", (dialog, id) -> writerequest(root));
+            builder.setNegativeButton("CANCEL", (dialog, id) -> cancel());
+            builder.create();
+            builder.show();
         });
 
         return root;
+    }
+
+    private void cancel(){}
+
+    private void writerequest(View root){
+        // テキスト入力の内容をログに表示
+        String textInput = binding.editTextUserInput1.getText().toString();
+        String textInput2 = binding.editTextUserInput2.getText().toString();
+        String spinner1Selection = viewModel.selectedOption.getValue();
+        String spinner2Selection = viewModel.selectedOption2.getValue();
+        // 保存メソッドを呼び出して情報をSharedPreferencesに保存
+        viewModel.saveQuestInfo(requireContext(), textInput, textInput2, spinner1Selection, spinner2Selection);
+        Snackbar.make(root, "依頼が出されました", Snackbar.LENGTH_SHORT)
+                .setAction("OK", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // ボタンを押した時の処理
+                    }
+                })
+                .show();
+        // 位置情報の取得
+        locationManagerHelper.getLocation(this);
+
+        // 投稿データをFirebase Realtime Databaseに書き込む
+        writePostDataToDatabase(textInput, textInput2, spinner1Selection, spinner2Selection);
     }
 
     private void writePostDataToDatabase(String title, String body, String genre, String difficulty){

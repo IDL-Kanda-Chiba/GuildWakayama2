@@ -9,24 +9,22 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import com.example.GuildWakayama2.databinding.FragmentHomeBinding;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
 import android.widget.ImageView;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import android.util.Log;
-import android.widget.Toast;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.example.GuildWakayama2.ui.LocationManagerHelper;
+import android.content.Intent;
+import android.net.Uri;
+import java.util.Locale;
 
 
 
@@ -34,17 +32,19 @@ import java.util.Map;
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
-    private HomeViewModel homeViewModel;
+
+    private LocationManagerHelper locationManagerHelper;
+    View root;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        root = binding.getRoot();
         switchrequestshow();
         switchrespondshow();
         setupEventListener(); // イベントリスナーの設定
+        // 新しいLocationManagerHelperのインスタンスを生成
+        locationManagerHelper = new LocationManagerHelper(requireContext());
         return root;
     }
 
@@ -60,7 +60,6 @@ public class HomeFragment extends Fragment {
                 for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
                     String eventId = eventSnapshot.getKey();
                     boolean judge = eventSnapshot.getValue(boolean.class);
-                    Log.d("RespondUser", "judge: " + judge);
 
                     // ここでイベントを処理する（例: 依頼達成処理）
                     handleCompletionEvent(judge);
@@ -92,7 +91,14 @@ public class HomeFragment extends Fragment {
             } else {
                 point += 100; // 簡単など、それ以外の場合はベースのみ
             }sharedPreferences.edit().putInt("point", point).apply();
-            Toast.makeText(requireContext(), "依頼を達成しました", Toast.LENGTH_SHORT).show();
+            Snackbar.make(root, "達成報酬が付与されました", Snackbar.LENGTH_SHORT)
+                    .setAction("OK", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // ボタンを押した時の処理
+                        }
+                    })
+                    .show();
         }CancelRespond();
     }
 
@@ -118,12 +124,41 @@ public class HomeFragment extends Fragment {
     }
 
     private void CancelRespond(){
+        Snackbar.make(root, "依頼をキャンセルしました", Snackbar.LENGTH_SHORT)
+                .setAction("OK", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // ボタンを押した時の処理
+                    }
+                })
+                .show();
         DeleteRespond();
         switchrespondshow();
     }
 
     private void SolveRespond() {
-        //DeleteRespond();
+        locationManagerHelper.getLocation(this);
+        // 起点の緯度経度
+        String src_lat = String.valueOf(locationManagerHelper.getLatitude());
+        String src_ltg = String.valueOf(locationManagerHelper.getLongitude());
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Responder", Context.MODE_PRIVATE);
+        // 目的地の緯度経度
+        String des_lat = sharedPreferences.getString("Latitude", "");
+        String des_ltg = sharedPreferences.getString("Longitude", "");
+
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+
+        intent.setClassName("com.google.android.apps.maps",
+                "com.google.android.maps.MapsActivity");
+
+        // 起点の緯度,経度, 目的地の緯度,経度
+        String str = String.format(Locale.US,
+                "http://maps.google.com/maps?saddr=%s,%s&daddr=%s,%s",
+                src_lat, src_ltg, des_lat, des_ltg);
+
+        intent.setData(Uri.parse(str));
+        startActivity(intent);
     }
 
     private void displayRespondData() {
@@ -135,7 +170,8 @@ public class HomeFragment extends Fragment {
             String level = sharedPreferences.getString("Difficulty", "");
 
             String displayText = "ジャンル: " + category + "\n難易度: " + level;
-            binding.RespondTitle.setText(title);
+            String titletext = "タイトル: " + title;
+            binding.RespondTitle.setText(titletext);
             binding.RespondTextview.setText(displayText);
         } else {
             // Requestがfalseの場合のログ表示
@@ -179,6 +215,14 @@ public class HomeFragment extends Fragment {
 
     // 投稿を取り消すボタンを押したときの処理
     private void CancelRequest(){
+        Snackbar.make(root, "依頼をキャンセルしました", Snackbar.LENGTH_SHORT)
+                .setAction("OK", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // ボタンを押した時の処理
+                    }
+                })
+                .show();
         DeleteRequest(2); // 投稿を取り消す処理
         switchrequestshow();
     }
@@ -248,7 +292,8 @@ public class HomeFragment extends Fragment {
             String level = sharedPreferences.getString("Level", "");
 
             String displayText = "ジャンル: " + category + "\n難易度: " + level;
-            binding.RequestTitle.setText(title);
+            String titletext = "タイトル: " + title;
+            binding.RequestTitle.setText(titletext);
             binding.RequestTextView.setText(displayText);
         } else {
             // Requestがfalseの場合のログ表示
@@ -268,7 +313,6 @@ public class HomeFragment extends Fragment {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String user_id = user.getUid();
-        Log.d("RespondUser", "RespondUser" + user_id);
 
         reference.child("user-id").child(user_id).child("respond_user_id").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -278,7 +322,6 @@ public class HomeFragment extends Fragment {
                     // 依頼が解決されたかキャンセルされたかに応じてイベントを送信
                     if (judge == 1) {
                         sendRequestEvent(true, respondUserId);
-                        Log.d("RespondUser", "Respond" + respondUserId);
                     } else if (judge == 2) {
                         sendRequestEvent(false, respondUserId);
                     }

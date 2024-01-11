@@ -17,11 +17,12 @@ import com.example.GuildWakayama2.databinding.FragmentDashboardBinding;
 import java.util.List;
 import com.example.GuildWakayama2.R;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.app.AlertDialog;
-import android.widget.Toast;
 import android.content.SharedPreferences;
 import com.example.GuildWakayama2.ui.LocationManagerHelper;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -39,6 +40,8 @@ public class DashboardFragment extends Fragment {
     private int displayedCount;
     private boolean norequest = false;
 
+    LinearLayout LL_Load,LL_Main;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         dashboardViewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
@@ -49,7 +52,6 @@ public class DashboardFragment extends Fragment {
         // 新しいLocationManagerHelperのインスタンスを生成
         locationManagerHelper = new LocationManagerHelper(requireContext());
 
-
         // 初回位置情報の取得
         if (isAdded()) {
             locationManagerHelper.getLocation(this);
@@ -59,13 +61,17 @@ public class DashboardFragment extends Fragment {
         Button updateButton = binding.buttonUpdate;
         updateButton.setOnClickListener(v -> loadDataFromFirebase());
 
+        LL_Load = binding.LLLoad;
+        LL_Main = binding.LLMain;
+
         // 初回のデータ読み込み
         loadDataFromFirebase();
         return root;
     }
 
     private void loadDataFromFirebase() {
-        // Firebaseからデータを取得する処理をここに追加
+        // 表示したデータをリセット
+        resetDisplayedData();
         FirebaseDataManager.getPosts("user-id", new FirebaseDataManager.OnDataLoadedListener() {
             @Override
             public void onDataLoaded(List<Post> posts) {
@@ -76,14 +82,19 @@ public class DashboardFragment extends Fragment {
             @Override
             public void onDataLoadError(String errorMessage) {
                 // データ読み込みエラーの場合の処理
-                Log.e("YourActivity", "Data load error: " + errorMessage);
+                Snackbar.make(root, "データの読み込みに失敗しました", Snackbar.LENGTH_SHORT)
+                        .setAction("OK", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                // ボタンを押した時の処理
+                            }
+                        })
+                        .show();
             }
         });
     }
 
     private void displayData(List<Post> posts) {
-        // 表示したデータをリセット
-        resetDisplayedData();
 
         // データが正常に読み込まれた場合の処理
         for (Post post : posts) {
@@ -101,7 +112,9 @@ public class DashboardFragment extends Fragment {
                 int textViewIndex = displayedCount;
 
                 // テキストビューにデータを表示するメソッドの呼び出し
-                displayDataOnTextView(textViewIndex, post.title, post.difficulty, post.user_name, post.genre, post.body,post.user_id);
+                displayDataOnTextView(textViewIndex,
+                        post.title, post.difficulty, post.user_name, post.genre, post.body,
+                        post.user_id,postLatitude,postLongitude);
 
                 // 表示回数が6回に達した場合はループを抜ける
                 if (displayedCount == 6) {
@@ -121,58 +134,49 @@ public class DashboardFragment extends Fragment {
         for (int i = displayedCount + 1; i <= 6; i++) {
             hideDataOnTextView(i);
         }
+        LL_Load.setVisibility(View.GONE);
+        LL_Main.setVisibility(View.VISIBLE);
     }
 
     private void resetDisplayedData() {
-        // 表示したデータをリセットし、非表示にする
-        for (int i = 1; i <= 6; i++) {
-            hideDataOnTextView(i);
-        }
+        LL_Load.setVisibility(View.VISIBLE);
+        LL_Main.setVisibility(View.GONE);
         displayedCount = 0;
     }
 
     private void showDataOnTextView(int index) {
-        int titleId = getResources().getIdentifier("title" + index, "id", requireContext().getPackageName());
-        int levelId = getResources().getIdentifier("level" + index, "id", requireContext().getPackageName());
-        int usernameId = getResources().getIdentifier("username" + index, "id", requireContext().getPackageName());
-        int imageId = getResources().getIdentifier("image" + index, "id", requireContext().getPackageName());
-        int bodyId = getResources().getIdentifier("body" + index, "id", requireContext().getPackageName());
+        int requestId = getResources().getIdentifier
+                ("request" + index, "id", requireContext().getPackageName());
+        LinearLayout linearLayout = root.findViewById(requestId);
+        linearLayout.setVisibility(View.VISIBLE);
+        if(norequest){
+            int titleId = getResources().getIdentifier("title" + index, "id", requireContext().getPackageName());
+            int levelId = getResources().getIdentifier("level" + index, "id", requireContext().getPackageName());
+            int usernameId = getResources().getIdentifier("username" + index, "id", requireContext().getPackageName());
+            int imageId = getResources().getIdentifier("image" + index, "id", requireContext().getPackageName());
+            int bodyId = getResources().getIdentifier("body" + index, "id", requireContext().getPackageName());
 
-        TextView titleTextView = root.findViewById(titleId);
-        TextView levelTextView = root.findViewById(levelId);
-        TextView usernameTextView = root.findViewById(usernameId);
-        ImageView imageView = root.findViewById(imageId);
-        TextView bodyTextView = root.findViewById(bodyId);
+            TextView titleTextView = root.findViewById(titleId);
+            TextView levelTextView = root.findViewById(levelId);
+            TextView usernameTextView = root.findViewById(usernameId);
+            ImageView imageView = root.findViewById(imageId);
+            TextView bodyTextView = root.findViewById(bodyId);
 
-        titleTextView.setVisibility(View.VISIBLE);
-        levelTextView.setVisibility(View.VISIBLE);
-        imageView.setVisibility(View.VISIBLE);
-        bodyTextView.setVisibility(View.VISIBLE);
-        if(!norequest){
-            usernameTextView.setVisibility(View.VISIBLE);
+            titleTextView.setText("申し訳ありません");
+            levelTextView.setText("現在依頼が出ておりません");
+            usernameTextView.setText("");
+            bodyTextView.setText("時間を空けてもう一度お試しください");
+            imageView.setImageResource(R.drawable.image_syazai);
         }
     }
 
 
     // displayDataOnTextViewメソッドの後に以下のメソッドを追加
     private void hideDataOnTextView(int index) {
-        int titleId = getResources().getIdentifier("title" + index, "id", requireContext().getPackageName());
-        int levelId = getResources().getIdentifier("level" + index, "id", requireContext().getPackageName());
-        int usernameId = getResources().getIdentifier("username" + index, "id", requireContext().getPackageName());
-        int imageId = getResources().getIdentifier("image" + index, "id", requireContext().getPackageName());
-        int bodyId = getResources().getIdentifier("body" + index, "id", requireContext().getPackageName());
-
-        TextView titleTextView = root.findViewById(titleId);
-        TextView levelTextView = root.findViewById(levelId);
-        TextView usernameTextView = root.findViewById(usernameId);
-        ImageView imageView = root.findViewById(imageId);
-        TextView bodyTextView = root.findViewById(bodyId);
-
-        titleTextView.setVisibility(View.GONE);
-        levelTextView.setVisibility(View.GONE);
-        usernameTextView.setVisibility(View.GONE);
-        imageView.setVisibility(View.GONE);
-        bodyTextView.setVisibility(View.GONE);
+        int requestId = getResources().getIdentifier
+                ("request" + index, "id", requireContext().getPackageName());
+        LinearLayout linearLayout = root.findViewById(requestId);
+        linearLayout.setVisibility(View.GONE);
     }
 
     // 距離を計算するメソッド
@@ -186,7 +190,10 @@ public class DashboardFragment extends Fragment {
     }
 
     // テキストビューにデータを表示するメソッド
-    private void displayDataOnTextView(int index, String title, String difficulty, String user_name,String genre,String body,String user_id) {
+    private void displayDataOnTextView(int index, String title, String difficulty, String user_name,
+                                       String genre, String body,String user_id,
+                                       double respond_latitude,double respond_longitude) {
+
         int titleId = getResources().getIdentifier("title" + index, "id", requireContext().getPackageName());
         int levelId = getResources().getIdentifier("level" + index, "id", requireContext().getPackageName());
         int usernameId = getResources().getIdentifier("username" + index, "id", requireContext().getPackageName());
@@ -212,18 +219,20 @@ public class DashboardFragment extends Fragment {
             imageView.setImageResource(R.drawable.image_other);
         }
 
-        imageView.setOnClickListener(v -> showConfirmationDialog(title, difficulty, user_name, genre,user_id));
+        imageView.setOnClickListener(v -> showConfirmationDialog(
+                title, difficulty, user_name, genre,user_id,respond_latitude,respond_longitude));
     }
 
     // 確認ダイアログを表示するメソッド
-    private void showConfirmationDialog(String title, String difficulty, String user_name, String genre,String user_id) {
+    private void showConfirmationDialog(String title, String difficulty, String user_name, String genre,
+                                        String user_id,double respond_latitude, double respond_longitude) {
         Log.d("dashboard","requestId" + user_id);
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("確認");
         builder.setMessage("この依頼を本当に受けますか？");
         builder.setPositiveButton("OK", (dialog, which) -> {
             // OKが押されたときの処理
-            onAcceptRequest(title, difficulty, user_name, genre,user_id);
+            onAcceptRequest(title, difficulty, user_name, genre,user_id,respond_latitude,respond_longitude);
         });
         builder.setNegativeButton("キャンセル", (dialog, which) -> {
             // キャンセルが押されたときの処理
@@ -233,22 +242,33 @@ public class DashboardFragment extends Fragment {
     }
 
     // 依頼を受けたときの処理
-    private void onAcceptRequest(String title, String difficulty, String user_name, String genre,String user_id) {
+    private void onAcceptRequest(String title, String difficulty, String user_name, String genre,
+                                 String user_id,double respond_latitude, double respond_longitude) {
         // ここにFirebaseに結果を書き込む処理を追加
         writeResultToFirebase(user_id);
         // ここにアプリ内で行う処理を追加
-        // 例: トーストメッセージを表示
-        Toast.makeText(requireContext(), "依頼を受けました", Toast.LENGTH_SHORT).show();
+        Snackbar.make(root, "依頼を受けました", Snackbar.LENGTH_SHORT)
+                .setAction("OK", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // ボタンを押した時の処理
+                    }
+                })
+                .show();
         // SharedPreferencesにデータを保存
-        saveToSharedPreferences(title, difficulty, user_name, genre, user_id);
+        saveToSharedPreferences(title, difficulty, user_name, genre, user_id,respond_latitude,respond_longitude);
     }
 
-    private void saveToSharedPreferences(String title, String difficulty, String user_name, String genre, String user_id) {
+    private void saveToSharedPreferences(String title, String difficulty, String user_name,
+                                         String genre, String user_id,
+                                         double respond_latitude,double respond_longitude) {
         // SharedPreferencesのインスタンスを取得
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("Responder", Context.MODE_PRIVATE);
 
         // SharedPreferencesにデータを保存するためのEditorを取得
         SharedPreferences.Editor editor = sharedPreferences.edit();
+        String latitude = String.valueOf(respond_latitude);
+        String longitude = String.valueOf(respond_longitude);
 
         // データを保存
         editor.putBoolean("Respond", true);
@@ -257,6 +277,8 @@ public class DashboardFragment extends Fragment {
         editor.putString("Username", user_name);
         editor.putString("Genre", genre);
         editor.putString("RequestKey", user_id);
+        editor.putString("Latitude", latitude);
+        editor.putString("Longitude", longitude);
 
         // 変更を保存
         editor.apply();
