@@ -52,16 +52,6 @@ public class HomeFragment extends Fragment {
     private void setupEventListener() {
         // イベントリスナーを設定
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String user_name;
-        /*
-        if(Objects.requireNonNull(user).getDisplayName() != null){
-            user_name = user.getDisplayName();
-        }
-        else {
-            user_name = "DefaultName";
-        }
-         */
-        //user_name = user.getDisplayName(); // nullに対する処理を書いておく
         String userId = user.getUid();
 
         DatabaseReference eventReference = FirebaseDatabase.getInstance().getReference("events").child("user-id").child(userId);

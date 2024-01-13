@@ -2,6 +2,7 @@ package com.example.GuildWakayama2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -10,7 +11,6 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.GuildWakayama2.ui.mypage.MypageFragment;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
@@ -51,8 +51,18 @@ public class FirebaseUIActivity extends AppCompatActivity {
         SignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                String user_name = user.getDisplayName();
+                if(user != null){
+                    Log.d("Sample", "user is already login: " + user_name);
+                    finish();
+                }
+                else {
+                    createSignInIntent();
+                    //finish();
+                }
                 // Email Sign-In button is clicked, navigate to EmailActivity
-                createSignInIntent();
+                //createSignInIntent();
             }
         });
 
@@ -125,7 +135,7 @@ public class FirebaseUIActivity extends AppCompatActivity {
         Intent signInIntent = AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
-                //.setLogo(R.drawable.my_great_logo)      // Set logo drawable
+                .setLogo(R.drawable.apuri_icon)      // Set logo drawable
                 //.setTheme(R.style.MySuperAppTheme)      // Set theme
                 .build();
         signInLauncher.launch(signInIntent);
