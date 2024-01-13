@@ -59,7 +59,7 @@ public class FirebaseUIActivity extends AppCompatActivity {
                 }
                 else {
                     createSignInIntent();
-                    finish();
+                    //finish();
                 }
                 // Email Sign-In button is clicked, navigate to EmailActivity
                 //createSignInIntent();
