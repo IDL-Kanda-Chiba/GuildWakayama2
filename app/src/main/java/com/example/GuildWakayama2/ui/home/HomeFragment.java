@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +53,16 @@ public class HomeFragment extends Fragment {
     private void setupEventListener() {
         // イベントリスナーを設定
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String userId = user.getUid();
+
+        String userId = null;
+        if(user != null){
+            userId = user.getUid();
+        }
+        else {
+            userId = "defaultUId";
+        }
+        //String userId = user.getUid();
+        Log.d("sample", "setupEventListener: " + userId);
 
         DatabaseReference eventReference = FirebaseDatabase.getInstance().getReference("events").child("user-id").child(userId);
         eventReference.addListenerForSingleValueEvent(new ValueEventListener() {
