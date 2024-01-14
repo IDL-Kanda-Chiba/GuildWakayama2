@@ -1,26 +1,36 @@
 package com.example.GuildWakayama2.ui.mypage;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Button;
-import android.widget.ImageView;
-import androidx.appcompat.app.AlertDialog;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+
 import com.example.GuildWakayama2.R;
 import com.example.GuildWakayama2.databinding.FragmentMypageBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MypageFragment extends Fragment {
 
     private FragmentMypageBinding binding;
     private MypageViewModel mypageViewModel;
+    private final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -91,6 +101,25 @@ public class MypageFragment extends Fragment {
                 String newUsername = newUsernameEditText.getText().toString();
                 String newEmail = newEmailEditText.getText().toString();
                 String newPassword = newPasswordEditText.getText().toString();
+
+                // Firebase Authのユーザ名を更新
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(newUsername)
+                        .build();
+
+                user.updateProfile(profileUpdates)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d("sample", "User profile updated.");
+                                }
+                            }
+                        });
+
+                // realtime databaseの親から子をたどってデータベースを更新
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("requests");
+                databaseReference.child("user-id").child(user.getUid()).child("user_name").setValue(newUsername);
 
                 mypageViewModel.setUserName(newUsername);
                 mypageViewModel.setEmail(newEmail);

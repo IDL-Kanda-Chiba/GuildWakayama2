@@ -52,9 +52,12 @@ public class FirebaseUIActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                String user_name = user.getDisplayName();
+                //String user_name = user.getDisplayName();
+                String user_name = null;
                 if(user != null){
+                    user_name = user.getDisplayName();
                     Log.d("Sample", "user is already login: " + user_name);
+                    //createSignInIntent(); テスト用なので提出時には消す
                     finish();
                 }
                 else {
@@ -135,7 +138,7 @@ public class FirebaseUIActivity extends AppCompatActivity {
         Intent signInIntent = AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
-                .setLogo(R.drawable.apuri_icon)      // Set logo drawable
+                //.setLogo(R.drawable.apuri_icon)      // Set logo drawable
                 //.setTheme(R.style.MySuperAppTheme)      // Set theme
                 .build();
         signInLauncher.launch(signInIntent);
