@@ -52,17 +52,15 @@ public class FirebaseUIActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                //String user_name = user.getDisplayName();
                 String user_name = null;
                 if(user != null){
                     user_name = user.getDisplayName();
                     Log.d("Sample", "user is already login: " + user_name);
-                    //createSignInIntent(); テスト用なので提出時には消す
+                    //createSignInIntent(); //テスト用なので提出時には消す
                     finish();
                 }
                 else {
                     createSignInIntent();
-                    //finish();
                 }
                 // Email Sign-In button is clicked, navigate to EmailActivity
                 //createSignInIntent();
@@ -84,6 +82,7 @@ public class FirebaseUIActivity extends AppCompatActivity {
                 .createSignInIntentBuilder()
                 .setIsSmartLockEnabled(false)
                 .setAvailableProviders(providers)
+                .setLogo(R.drawable.apuri_icon_1)
                 .build();
         signInLauncher.launch(signInIntent);
     }
@@ -138,8 +137,10 @@ public class FirebaseUIActivity extends AppCompatActivity {
         Intent signInIntent = AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
-                //.setLogo(R.drawable.apuri_icon)      // Set logo drawable
-                //.setTheme(R.style.MySuperAppTheme)      // Set theme
+                //.setLogo(R.drawable.apuri_icon_1)      // Set logo drawable
+                //.setTheme(R.style.Theme_GuildWakayama2)      // Set theme
+                //.setTheme(R.style.Theme_GuildWakayama2)
+                .setLogo(R.drawable.apuri_icon_1)
                 .build();
         signInLauncher.launch(signInIntent);
     }
